@@ -1,0 +1,140 @@
+//Suurballe's Algorithm
+#include<bits/stdc++.h>
+#define maxn 100005
+#define maxm 1000005
+#define LL long long
+#define rep(i,j,k) for(int i=(j),LIM=(k);i<=LIM;i++)
+#define per(i,j,k) for(int i=(j),LIM=(k);i>=LIM;i--)
+#define ADJ(i,u,info) for(int i=info[u],v;i;i=Prev[i])
+using namespace std;
+
+char cb[1<<15],*cs=cb,*ct=cb;
+#define getc() (cs==ct&&(ct=(cs=cb)+fread(cb,1,1<<15,stdin),cs==ct)?0:*cs++)
+void read(int &res){
+	char ch;
+	for(;!isdigit(ch=getc()););
+	for(res=ch-'0';isdigit(ch=getc());res=res*10+ch-'0');
+}
+
+int n,m;
+int tre[maxn],ine[maxn],ote[maxn],fir[maxn],Prev[maxm],to[maxm],pre[maxn],ont[maxm],col[maxn],seq[maxn],cnt_e,ctot;
+LL cst[maxm],dis[maxn],d[maxn];
+bool dne[maxn];
+void Node(int *info,int u,int v,LL c){
+	Prev[++cnt_e]=info[u],info[u]=cnt_e,to[cnt_e]=v,cst[cnt_e]=c;
+}
+
+void init(){
+	read(n),read(m);
+	rep(i,1,m){
+		int u,v,w;
+		read(u),read(v),read(w);
+		Node(fir,u,v,w);
+	}
+}
+
+int qsz(int a,int lim){
+	static int q[maxn],l,r,vis[maxn],tim=0;
+	tim++,vis[q[l=r=1]=a]=tim;
+	for(int u;l<=r;){
+		u=q[l++];
+		ADJ(i,u,tre) if(!dne[v=to[i]] && vis[v]!=tim){
+			vis[q[++r] = v]=tim;
+			if(r > lim) return r;
+		}
+	}
+	return r;
+}
+
+bool cmp(int a,int b){
+	for(int sz=2;;sz<<=1){
+		int ta = qsz(a,sz) , tb = qsz(b,sz);
+		if(ta <= sz || tb <= sz)
+			return tb >= ta;
+	}
+}
+
+void dfs(int u,int ff,int p){
+	col[seq[++seq[0]] = u] = p;
+	ADJ(i,u,tre) if((v=to[i])^ff && !dne[v])
+		dfs(v,u,p);
+}
+
+void Solve(){
+	priority_queue<pair<LL,int>,vector<pair<LL,int> >,greater<pair<LL,int> > >q;
+
+	//dijkstra
+	memset(dis,0x3f,sizeof dis);
+	q.push(make_pair(dis[1]=0,1));
+	LL w;
+	for(int u;!q.empty();){
+		u=q.top().second,w=q.top().first,q.pop();
+		if(w > dis[u]) continue;
+		ADJ(i,u,fir) if(dis[v=to[i]] > dis[u] + cst[i]){
+			dis[v] = dis[u] + cst[i]; 
+			pre[v] = i;
+			q.push(make_pair(dis[v],v));
+		}
+	}
+	
+	//revalue the edge
+	rep(i,1,n) if(pre[i]) ont[pre[i]] = 1;
+	rep(u,1,n) ADJ(i,u,fir){
+		v=to[i];
+		LL ct = cst[i] + dis[u] - dis[v];
+		if(ont[i]) Node(tre,u,v,0),Node(tre,v,u,0);
+		else Node(ine,v,u,ct),Node(ote,u,v,ct);
+	} 
+	
+	//dijkstra on new graph
+	memset(d,0x3f,sizeof d);
+	q.push(make_pair(d[1]=0,1));
+	for(int u;!q.empty();){
+		u=q.top().second,w=q.top().first,q.pop();
+		if(dne[u] || w != d[u]) continue;
+		dne[u] = 1;
+		
+		ADJ(i,u,ote) if(!dne[v=to[i]] && d[v] > d[u] + cst[i]){
+			d[v] = d[u] + cst[i];
+			q.push(make_pair(d[v] , v));
+		}
+		
+		int mxt = 0;
+		ADJ(i,u,tre) if(!dne[v=to[i]])
+			if(!mxt || cmp(mxt , v))
+				mxt = v;
+		
+		int lt = ctot;
+		ADJ(i,u,tre) if(!dne[v=to[i]] && v^mxt) 
+			dfs(v,0,++ctot);
+			
+		for(int p;seq[0];){
+			p=seq[seq[0]--];
+			ADJ(i,p,ote) if(col[v=to[i]] == col[mxt] && d[v] > w + cst[i]){
+				d[v] = w + cst[i];
+				q.push(make_pair(d[v],v));
+			}
+			LL nd = d[p];
+			ADJ(i,p,ine) if(col[v=to[i]] != col[p] && (col[v] == col[mxt] || col[v] > lt))
+				nd = min(nd , w + cst[i]);
+			if(nd < d[p]) d[p] = nd , q.push(make_pair(d[p],p));
+		}
+	}
+	
+	for(int i=2;i<=n;i++){
+		LL ans = 0;
+		if(d[i] >= 0x3f3f3f3f3f3f3f3fll) ans = -1;
+		else ans = dis[i] * 2 + d[i];
+		printf("%lld\n",ans);
+	}
+}
+
+int main(){
+	
+	//freopen("1.in","r",stdin);
+	//freopen("1.out","w",stdout);
+	
+	init();
+	Solve();
+}
+
