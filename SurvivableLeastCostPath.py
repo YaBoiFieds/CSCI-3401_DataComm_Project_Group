@@ -1,21 +1,7 @@
-import random
-
-G = {
-    1: {2: 3, 3: 6, 7: 7, 8: 8},
-    2: {1: 3, 3: 3, 4: 4},
-    3: {1: 6, 2: 3, 6: 7},
-    4: {2: 4, 5: 2, 11: 9},
-    5: {4: 2, 6: 6, 7: 3},
-    6: {3: 7, 5: 6, 10: 6, 14: 8},
-    7: {1: 7, 5: 3, 8: 2},
-    8: {1: 8, 7: 2, 9: 3},
-    9: {8: 3, 10: 4, 12: 3, 13: 2},
-    10: {6: 6, 9: 4},
-    11: {4: 9, 12: 4, 13: 4},
-    12: {9: 3, 11: 4, 14: 3},
-    13: {9: 2, 11: 4, 14: 1},
-    14: {6: 8, 12: 3, 13: 1}
-}
+def __init__(self, graph, source, destination):
+    self.graph = graph
+    self.source = source
+    self.destination = destination
 
 
 def dijkstra(graph, source, destination):
@@ -69,10 +55,11 @@ def dijkstra(graph, source, destination):
         print("Shortest path is " + str(shortest_distance[destination]))
         print("Optimum path is " + str(track_path))
 
-s = random.randint(1, 14)  # randomised source
-d = random.randint(1, 14)  # randomised destination
-if d == s:  # randomises d again if same as source
-    d = random.randint(0, 13)
+    with open('path_output.txt', 'w') as f:
+        for i in track_path:
+            f.write('%d\n' % i)
+        f.close()
 
-print("Source node: " + str(s) + "\nDestination node: " + str(d))
-dijkstra(G, s, d)
+    with open('cost_output.txt', 'w') as f:
+        f.write(str(shortest_distance[destination]))
+        f.close()
