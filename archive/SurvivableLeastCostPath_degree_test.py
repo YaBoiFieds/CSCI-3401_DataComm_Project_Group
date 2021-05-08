@@ -1,5 +1,5 @@
 import unittest
-from SurvivableLeastCostPath import *
+from archive.SurvivableLeastCostPath import *
 
 class DegreeTestCase(unittest.TestCase):
     def test_degree_accurate(self):

@@ -1,5 +1,5 @@
 import unittest
-from SurvivableLeastCostPath import *
+from archive.SurvivableLeastCostPath import *
 
 class NbrsTestCase(unittest.TestCase):
     def test_nbrs_accurate(self):

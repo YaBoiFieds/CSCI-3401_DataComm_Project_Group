@@ -1,5 +1,5 @@
 import unittest
-from SurvivableLeastCostPath import *
+from archive.SurvivableLeastCostPath import *
 
 class RemoveEdgeTest(unittest.TestCase):
     def test_removeEdge_accurate(self):

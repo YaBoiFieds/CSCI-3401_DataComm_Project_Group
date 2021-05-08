@@ -1,5 +1,5 @@
 import unittest
-from SurvivableLeastCostPath import *
+from archive.SurvivableLeastCostPath import *
 
 class AddEdgeTestCase(unittest.TestCase):
     def test_addEdge_works(self):

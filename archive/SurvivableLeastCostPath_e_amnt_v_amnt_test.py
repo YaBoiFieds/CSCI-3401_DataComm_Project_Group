@@ -1,5 +1,5 @@
 import unittest
-from SurvivableLeastCostPath import *
+from archive.SurvivableLeastCostPath import *
 
 class EAmntVAmntTestCase(unittest.TestCase):
     def test_v_amnt_accurate(self):
